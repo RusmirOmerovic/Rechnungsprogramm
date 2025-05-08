@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rechnung>
+    <position>
+        <produktname>Apfel</produktname>
+        <preis>1.50</preis>
+        <menge>4</menge>
+        <gesamt>6.00</gesamt>
+        <steuersatz>7%</steuersatz>
+        <steuerbetrag>0.42</steuerbetrag>
+    </position>
+    <position>
+        <produktname>Brot</produktname>
+        <preis>3.00</preis>
+        <menge>2</menge>
+        <gesamt>6.00</gesamt>
+        <steuersatz>7%</steuersatz>
+        <steuerbetrag>0.42</steuerbetrag>
+    </position>
+</rechnung>
