@@ -2,20 +2,26 @@ from fpdf import FPDF
 from fpdf.enums import XPos, YPos
 import os
 
-def rechnung_als_pdf_speichern(produkte, kundendaten, dateiname="rechnung.pdf"):
+def rechnung_als_pdf_speichern(produkte, kundendaten, rechnungsnummer, rechnungsdatum, dateiname="rechnung.pdf"):
     pdf = FPDF()
     pdf.add_page()
-
     pdf.add_font("DejaVu", "", "fonts/DejaVuSans.ttf")
     pdf.set_font("DejaVu", size=12)
 
-    # Logo einfügen
+    # Logo oben rechts
     try:
-        pdf.image("logo.png", x=10, y=8, w=33)
+        logo_breite = 33
+        abstand_rechts = 10
+        pdf.image("Logo.svg", x=210 - logo_breite - abstand_rechts, y=8, w=logo_breite)
     except FileNotFoundError:
         print("⚠️ Logo nicht gefunden. PDF wird ohne Logo erstellt.")
 
-    # Firmenadresse
+    # Datum oben rechts neben dem Logo
+    pdf.set_xy(10, 10)
+    pdf.set_font("DejaVu", size=10)
+    pdf.cell(0, 10, f"Datum: {rechnungsdatum}", align="R", ln=True)
+
+    # Kundendaten / Adresse
     pdf.set_xy(10, 50)
     pdf.set_font("DejaVu", size=10)
     pdf.multi_cell(0, 5, kundendaten)
@@ -23,7 +29,12 @@ def rechnung_als_pdf_speichern(produkte, kundendaten, dateiname="rechnung.pdf"):
     # Titel
     pdf.set_xy(10, 90)
     pdf.set_font("DejaVu", size=16)
-    pdf.cell(200, 10, text="🧾 Rechnung", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 10, "🧾 Rechnung", ln=True)
+
+    # Rechnungsnummer direkt unter dem Titel
+    pdf.set_font("DejaVu", size=10)
+    pdf.cell(0, 10, f"Rechnungsnummer: {rechnungsnummer}", ln=True)
+
     pdf.ln(5)
 
     # Tabelle
