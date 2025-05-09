@@ -1,7 +1,7 @@
 # rechnung.py
 
-from kunde import Kunde
-from position import Position
+from models.kunde import Kunde
+from models.position import Position
 import datetime
 
 class Rechnung:

@@ -1,10 +1,6 @@
 #!/bin/bash
 
-# Navigiere in den Projektordner
-cd /Users/rusmir/Documents/PythonFiles/Rechnungsprogramm
+echo "🚀 Starte Rechnungsprogramm-Test..."
 
-# Virtuelles Environment aktivieren
-source .venv/bin/activate
-
-# Starte das Programm
-python rechnung.py
+# Modulstruktur beachten: von Projektverzeichnis aus starten
+python3 -m tests.test_rechnung

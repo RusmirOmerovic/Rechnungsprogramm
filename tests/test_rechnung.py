@@ -1,6 +1,20 @@
-from kunde import Kunde
-from position import Position
-from rechnung import Rechnung
+from models.kunde import Kunde
+from models.position import Position
+from models.rechnung import Rechnung
+
+# Test gültige Position
+try:
+    p1 = Position("Webdesign", 5, 80.0)
+    print("✅ Gültige Position erfolgreich erstellt:", p1)
+except Exception as e:
+    print("❌ Fehler:", e)
+
+# Test ungültige Position
+try:
+    p2 = Position("Support", -3, 100.0)  # ungültige Menge
+except Exception as e:
+    print("❌ Erwarteter Fehler:", e)
+    
 
 kunde = Kunde("Max", "Mustermann", "Hauptstraße 1", "12345", "Musterstadt")
 position1 = Position("Webdesign", 5, 80.00)
