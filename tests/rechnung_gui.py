@@ -1,3 +1,9 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+
+
 import tkinter as tk
 from tkinter import messagebox
 import json
@@ -23,11 +29,24 @@ os.makedirs("daten", exist_ok=True)
 def lade_kunden():
     global kunden_liste
     if os.path.exists(kunden_datei):
-        with open(kunden_datei, "r", encoding="utf-8") as f:
-            kunden_liste = json.load(f)
-        dropdown_kunden["menu"].delete(0, "end")
-        for name in kunden_liste:
-            dropdown_kunden["menu"].add_command(label=name, command=tk._setit(kunden_var, name, kunde_auswaehlen))
+        try:
+            with open(kunden_datei, "r", encoding="utf-8") as f:
+                content = f.read().strip()
+                if content:
+                    kunden_liste = json.loads(content)
+                else:
+                    kunden_liste = {}
+        except json.JSONDecodeError:
+            kunden_liste = {}
+            messagebox.showwarning("Warnung", "kunden.json ist beschädigt. Es wurden keine Kunden geladen.")
+    else:
+        kunden_liste = {}
+
+    # Dropdown aktualisieren
+    dropdown_kunden["menu"].delete(0, "end")
+    for name in kunden_liste:
+        dropdown_kunden["menu"].add_command(label=name, command=tk._setit(kunden_var, name, kunde_auswaehlen))
+
 
 # --- Kunde auswählen aus Dropdown ---
 def kunde_auswaehlen(name):

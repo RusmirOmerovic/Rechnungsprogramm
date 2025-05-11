@@ -1,19 +1,71 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import tkinter as tk
 from tkinter import messagebox
+import json
+import os
 from models.kunde import Kunde
 from models.position import Position
 from models.rechnung import Rechnung
 from exports.pdf_export import PDFExporter
-import os
 
 # Fenster starten
 root = tk.Tk()
 root.title("Rechnungsprogramm")
 
-# Liste für Positionen
+# --- Positionenliste und Kundenverwaltung ---
 positionen_liste = []
+kunden_liste = {}  # Dict für gespeicherte Kunden
+kunden_datei = "daten/kunden.json"
 
-# --- Eingabefelder Kunde ---
+# Stelle sicher, dass daten/-Ordner existiert
+os.makedirs("daten", exist_ok=True)
+
+# --- Kundenverwaltung laden ---
+def lade_kunden():
+    global kunden_liste
+    if os.path.exists(kunden_datei):
+        with open(kunden_datei, "r", encoding="utf-8") as f:
+            kunden_liste = json.load(f)
+        dropdown_kunden["menu"].delete(0, "end")
+        for name in kunden_liste:
+            dropdown_kunden["menu"].add_command(label=name, command=tk._setit(kunden_var, name, kunde_auswaehlen))
+
+# --- Kunde auswählen aus Dropdown ---
+def kunde_auswaehlen(name):
+    daten = kunden_liste.get(name)
+    if daten:
+        entry_name.delete(0, tk.END)
+        entry_name.insert(0, name)
+        entry_strasse.delete(0, tk.END)
+        entry_strasse.insert(0, daten["strasse"])
+        entry_ort.delete(0, tk.END)
+        entry_ort.insert(0, f'{daten["plz"]} {daten["ort"]}')
+
+# --- Kunde speichern ---
+def speichere_kunde():
+    name = entry_name.get()
+    strasse = entry_strasse.get()
+    plz_ort = entry_ort.get().split(" ")
+    if len(plz_ort) < 2:
+        messagebox.showerror("Fehler", "PLZ und Ort korrekt eingeben.")
+        return
+
+    kunden_liste[name] = {
+        "strasse": strasse,
+        "plz": plz_ort[0],
+        "ort": " ".join(plz_ort[1:])
+    }
+
+    with open(kunden_datei, "w", encoding="utf-8") as f:
+        json.dump(kunden_liste, f, indent=2, ensure_ascii=False)
+
+    lade_kunden()
+    messagebox.showinfo("Gespeichert", f"Kunde '{name}' wurde gespeichert.")
+
+# --- GUI-Eingabefelder: Kundendaten ---
 tk.Label(root, text="Kunde:").pack()
 entry_name = tk.Entry(root)
 entry_name.pack()
@@ -25,6 +77,16 @@ entry_strasse.pack()
 tk.Label(root, text="PLZ Ort:").pack()
 entry_ort = tk.Entry(root)
 entry_ort.pack()
+
+# --- Kundenauswahl-Dropdown ---
+tk.Label(root, text="Gespeicherte Kunden auswählen:").pack()
+kunden_var = tk.StringVar(root)
+kunden_var.set("Kundenliste")
+dropdown_kunden = tk.OptionMenu(root, kunden_var, ())
+dropdown_kunden.pack()
+
+# --- Buttons für Kunden ---
+tk.Button(root, text="💾 Kunde speichern", command=speichere_kunde).pack(pady=3)
 
 # --- Eingabefelder Position ---
 tk.Label(root, text="Leistung:").pack()
@@ -39,11 +101,12 @@ tk.Label(root, text="Einzelpreis:").pack()
 entry_preis = tk.Entry(root)
 entry_preis.pack()
 
-# --- Listbox für Positionen + Gesamtsumme ---
+# --- Listbox für Positionen ---
 tk.Label(root, text="Positionen:").pack()
 positions_listbox = tk.Listbox(root, width=60, height=8)
 positions_listbox.pack()
 
+# --- Gesamtsumme anzeigen ---
 gesamt_label = tk.Label(root, text="Gesamtsumme: 0.00€")
 gesamt_label.pack()
 
@@ -102,9 +165,12 @@ def erstelle_pdf():
     except Exception as e:
         messagebox.showerror("Fehler", str(e))
 
-# --- Buttons ---
+# --- Buttons für Positionen + PDF ---
 tk.Button(root, text="➕ Position hinzufügen", command=add_position).pack(pady=3)
 tk.Button(root, text="❌ Position löschen", command=loesche_position).pack(pady=3)
 tk.Button(root, text="📄 PDF erzeugen", command=erstelle_pdf).pack(pady=10)
 
+# --- Programm starten ---
+lade_kunden()
 root.mainloop()
+# --- Ende der GUI ---
