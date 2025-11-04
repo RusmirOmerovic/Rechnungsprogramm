@@ -9,6 +9,7 @@ import os
 from models.kunde import Kunde
 from models.position import Position
 from models.rechnung import Rechnung
+from rechnungsnummer import lese_und_aktualisiere_rechnungsnummer
 from exports.pdf_export import PDFExporter
 
 # Fenster starten
@@ -155,7 +156,8 @@ def erstelle_pdf():
             raise ValueError("Bitte PLZ und Ort eingeben (z.B. 85560 München)")
 
         kunde = Kunde(name, "", strasse, plz_ort[0], " ".join(plz_ort[1:]))
-        rechnung = Rechnung("2025-001", kunde, positionen_liste)
+        rechnungsnummer = lese_und_aktualisiere_rechnungsnummer()
+        rechnung = Rechnung(rechnungsnummer, kunde, positionen_liste)
 
         os.makedirs("tests", exist_ok=True)
         exporter = PDFExporter(rechnung)

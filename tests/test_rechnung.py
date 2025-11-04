@@ -2,6 +2,7 @@ from models.kunde import Kunde
 from models.position import Position
 from models.rechnung import Rechnung
 from models.errors import InvalidPositionError
+from rechnungsnummer import lese_und_aktualisiere_rechnungsnummer
 
 try:
     fehlerhafte_position = Position("Support", -5, 120.0)
@@ -27,7 +28,8 @@ kunde = Kunde("Max", "Mustermann", "Hauptstraße 1", "12345", "Musterstadt")
 position1 = Position("Webdesign", 5, 80.00)
 position2 = Position("Beratung", 2, 100.00)
 
-rechnung = Rechnung("2025-001", kunde, [position1, position2])
+rechnungsnummer = lese_und_aktualisiere_rechnungsnummer()
+rechnung = Rechnung(rechnungsnummer, kunde, [position1, position2])
 print(rechnung)
 
 
