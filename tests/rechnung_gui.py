@@ -172,11 +172,10 @@ def erstelle_pdf():
         kunde = Kunde(name, "", strasse, plz_ort[0], " ".join(plz_ort[1:]))
         rechnung = Rechnung("2025-001", kunde, positionen_liste)
 
-        os.makedirs("tests", exist_ok=True)
         exporter = PDFExporter(rechnung)
-        exporter.export("tests/rechnung_gui.pdf")
+        pdf_path = exporter.export("rechnung_gui.pdf")
 
-        messagebox.showinfo("Erfolg", "PDF wurde erstellt: tests/rechnung_gui.pdf")
+        messagebox.showinfo("Erfolg", f"PDF wurde erstellt: {pdf_path}")
     except Exception as e:
         messagebox.showerror("Fehler", str(e))
 

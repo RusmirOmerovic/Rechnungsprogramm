@@ -36,4 +36,4 @@ print(rechnung)
 from exports.pdf_export import PDFExporter
 
 pdf_export = PDFExporter(rechnung)
-pdf_export.export("tests/test_rechnung.pdf")
+pdf_export.export("test_rechnung.pdf")
