@@ -1,7 +1,11 @@
+from pathlib import Path
+
 from fpdf import FPDF
 from models.rechnung import Rechnung
 from models.kunde import Kunde
 from models.position import Position
+
+from . import EXPORT_DIR
 
 class PDFExporter:
     def __init__(self, rechnung: Rechnung):
@@ -66,9 +70,19 @@ class PDFExporter:
         summe_line("Bruttobetrag:", brutto)
 
 
-    def export(self, pfad="rechnung.pdf"):
+    def export(self, pfad: str | Path | None = None) -> Path:
         self.add_header()
         self.add_kundendaten()
         self.add_positionen()
         self.add_summe()
-        self.pdf.output(pfad)
+        if pfad is None:
+            pfad = Path("rechnung.pdf")
+
+        pfad = Path(pfad)
+        if not pfad.is_absolute():
+            pfad = EXPORT_DIR / pfad
+
+        pfad.parent.mkdir(parents=True, exist_ok=True)
+
+        self.pdf.output(str(pfad))
+        return pfad

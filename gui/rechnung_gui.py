@@ -159,11 +159,10 @@ def erstelle_pdf():
         rechnungsnummer = lese_und_aktualisiere_rechnungsnummer()
         rechnung = Rechnung(rechnungsnummer, kunde, positionen_liste)
 
-        os.makedirs("tests", exist_ok=True)
         exporter = PDFExporter(rechnung)
-        exporter.export("tests/rechnung_gui.pdf")
+        pdf_path = exporter.export(f"rechnung_{rechnungsnummer}.pdf")
 
-        messagebox.showinfo("Erfolg", "PDF wurde erstellt: tests/rechnung_gui.pdf")
+        messagebox.showinfo("Erfolg", f"PDF wurde erstellt: {pdf_path}")
     except Exception as e:
         messagebox.showerror("Fehler", str(e))
 
