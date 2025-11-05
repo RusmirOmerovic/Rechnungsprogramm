@@ -1,14 +1,40 @@
 import csv
-import os
+from pathlib import Path
 
-def rechnung_als_csv_speichern(produkte, dateiname="rechnung.csv"):
-    os.makedirs(os.path.dirname(dateiname), exist_ok=True)
+from models.rechnung import Rechnung
 
-    with open(dateiname, mode="w", newline="", encoding="utf-8") as csvfile:
+from . import EXPORT_DIR
+from .export_utils import DEFAULT_STEUERSATZ, rechnung_zu_exportpositionen
+
+
+def rechnung_als_csv_speichern(
+    rechnung: Rechnung,
+    dateiname: str | None = None,
+    steuersatz: float = DEFAULT_STEUERSATZ,
+) -> Path:
+    export_positionen = rechnung_zu_exportpositionen(rechnung, steuersatz)
+
+    ziel_datei = dateiname or f"rechnung_{rechnung.nummer}.csv"
+    pfad = Path(ziel_datei)
+    if not pfad.is_absolute():
+        pfad = EXPORT_DIR / pfad
+
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+
+    with pfad.open(mode="w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["Produkt", "Preis", "Menge", "Gesamt", "Steuersatz (%)", "Steuerbetrag (€)"])
 
-        for produkt, preis, menge, steuersatz in produkte:
-            gesamt = preis * menge
-            steuer_betrag = gesamt * (steuersatz / 100)
-            writer.writerow([produkt, f"{preis:.2f}", menge, f"{gesamt:.2f}", steuersatz, f"{steuer_betrag:.2f}"])
+        for position in export_positionen:
+            writer.writerow(
+                [
+                    position.beschreibung,
+                    f"{position.einzelpreis:.2f}",
+                    position.menge,
+                    f"{position.gesamt:.2f}",
+                    position.steuersatz,
+                    f"{position.steuerbetrag:.2f}",
+                ]
+            )
+
+    return pfad

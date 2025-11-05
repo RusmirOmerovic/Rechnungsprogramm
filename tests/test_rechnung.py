@@ -3,6 +3,8 @@ from models.position import Position
 from models.rechnung import Rechnung
 from models.errors import InvalidPositionError
 from rechnungsnummer import lese_und_aktualisiere_rechnungsnummer
+from exports.csv_export import rechnung_als_csv_speichern
+from exports.xml_export import rechnung_als_xml_speichern
 
 try:
     fehlerhafte_position = Position("Support", -5, 120.0)
@@ -36,4 +38,11 @@ print(rechnung)
 from exports.pdf_export import PDFExporter
 
 pdf_export = PDFExporter(rechnung)
-pdf_export.export("test_rechnung.pdf")
+pdf_path = pdf_export.export("test_rechnung.pdf")
+csv_path = rechnung_als_csv_speichern(rechnung, "test_rechnung.csv")
+xml_path = rechnung_als_xml_speichern(rechnung, "test_rechnung.xml")
+
+print("📄 Exportierte Dateien:")
+print("  PDF:", pdf_path)
+print("  CSV:", csv_path)
+print("  XML:", xml_path)
