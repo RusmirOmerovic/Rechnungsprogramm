@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from invoice_app.pages.customers_page import CustomersPage
 from invoice_app.pages.simple_page import SimplePage
 
 
@@ -34,9 +35,12 @@ class MainWindow(QMainWindow):
             ("Einstellungen", "App-Einstellungen, Nummernkreise und Standardwerte."),
         ]
 
-        for title, description in sections:
+        for index, (title, description) in enumerate(sections):
             self.navigation.addItem(QListWidgetItem(title))
-            self.pages.addWidget(SimplePage(title, description))
+            if index == 1:
+                self.pages.addWidget(CustomersPage())
+            else:
+                self.pages.addWidget(SimplePage(title, description))
 
         self.navigation.currentRowChanged.connect(self.pages.setCurrentIndex)
         self.navigation.setCurrentRow(0)
