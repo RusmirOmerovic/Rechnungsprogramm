@@ -2,3 +2,6 @@ defusedxml==0.7.1
 fonttools==4.57.0
 fpdf2==2.8.3
 pillow==11.2.1
+PySide6
+SQLAlchemy
+reportlab
