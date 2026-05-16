@@ -52,6 +52,18 @@ python gui/rechnung_gui.py
 
 ---
 
+## ✅ Manuelle Prüfliste Kundenvalidierung
+
+- Kunde anlegen (gültige Daten)
+- Kunde mit leerem Namen
+- Kunde mit leerer Kundennummer
+- Kunde mit ungültiger E-Mail (ohne `@`)
+- Kunde mit ungültiger PLZ (nicht-numerisch)
+- Kunde bearbeiten
+- Kunde löschen
+
+---
+
 ## 🧪 Tests
 
 Ein einfacher Regressions-Test erzeugt ein Test-PDF:

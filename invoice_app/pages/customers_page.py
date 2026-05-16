@@ -129,14 +129,23 @@ class CustomersPage(QWidget):
         for label in self.detail_labels.values():
             label.setText("-")
 
-    def create_customer(self) -> None:
-        dialog = CustomerDialog(self)
-        if dialog.exec():
+    def _open_and_save_customer_dialog(self, dialog: CustomerDialog, on_save) -> None:
+        while True:
+            if not dialog.exec():
+                return
             try:
-                self.service.create_customer(dialog.get_data())
+                on_save(dialog.get_data())
                 self.load_customers()
+                return
+            except ValueError as error:
+                QMessageBox.warning(self, "Validierungsfehler", str(error))
             except Exception as error:
                 QMessageBox.critical(self, "Fehler", str(error))
+                return
+
+    def create_customer(self) -> None:
+        dialog = CustomerDialog(self)
+        self._open_and_save_customer_dialog(dialog, self.service.create_customer)
 
     def edit_customer(self) -> None:
         customer_id = self.get_selected_customer_id()
@@ -147,12 +156,10 @@ class CustomersPage(QWidget):
         if customer is None:
             return
         dialog = CustomerDialog(self, customer)
-        if dialog.exec():
-            try:
-                self.service.update_customer(customer_id, dialog.get_data())
-                self.load_customers()
-            except Exception as error:
-                QMessageBox.critical(self, "Fehler", str(error))
+        self._open_and_save_customer_dialog(
+            dialog,
+            lambda payload: self.service.update_customer(customer_id, payload),
+        )
 
     def delete_customer(self) -> None:
         customer_id = self.get_selected_customer_id()
