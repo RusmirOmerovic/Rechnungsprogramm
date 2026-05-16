@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
 
 from invoice_app.pages.customers_page import CustomersPage
 from invoice_app.pages.simple_page import SimplePage
+from invoice_app.pages.invoices_page import InvoicesPage
 
 
 class MainWindow(QMainWindow):
@@ -39,6 +40,8 @@ class MainWindow(QMainWindow):
             self.navigation.addItem(QListWidgetItem(title))
             if index == 1:
                 self.pages.addWidget(CustomersPage())
+            elif index == 2:
+                self.pages.addWidget(InvoicesPage())
             else:
                 self.pages.addWidget(SimplePage(title, description))
 
