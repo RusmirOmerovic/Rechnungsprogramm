@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from invoice_app.models.customer import Customer
 
@@ -10,6 +10,9 @@ class CustomerRepository:
     def list_customers(self) -> list[Customer]:
         stmt = select(Customer).order_by(Customer.name.asc())
         return list(self.session.scalars(stmt).all())
+
+    def count_customers(self) -> int:
+        return self.session.scalar(select(func.count(Customer.id)))
 
     def get_customer(self, customer_id: int) -> Customer | None:
         return self.session.get(Customer, customer_id)

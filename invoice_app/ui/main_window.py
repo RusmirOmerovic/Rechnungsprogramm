@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 )
 
 from invoice_app.pages.customers_page import CustomersPage
+from invoice_app.pages.dashboard_page import DashboardPage
 from invoice_app.pages.simple_page import SimplePage
 from invoice_app.pages.invoices_page import InvoicesPage
 
@@ -38,7 +39,9 @@ class MainWindow(QMainWindow):
 
         for index, (title, description) in enumerate(sections):
             self.navigation.addItem(QListWidgetItem(title))
-            if index == 1:
+            if index == 0:
+                self.pages.addWidget(DashboardPage())
+            elif index == 1:
                 self.pages.addWidget(CustomersPage())
             elif index == 2:
                 self.pages.addWidget(InvoicesPage())
