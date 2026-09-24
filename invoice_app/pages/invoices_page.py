@@ -1,6 +1,6 @@
 import os
 import subprocess
-from PySide6.QtWidgets import QHBoxLayout, QMessageBox, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QDialog, QHBoxLayout, QMessageBox, QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
 
 from invoice_app.dialogs.invoice_dialog import InvoiceDialog
 from invoice_app.services.invoice_service import InvoiceService
@@ -37,11 +37,16 @@ class InvoicesPage(QWidget):
 
     def create_invoice(self):
         dialog = InvoiceDialog(self)
-        if not dialog.exec(): return
+        if dialog.exec() != QDialog.DialogCode.Accepted: return
         try:
-            self.service.create_invoice(dialog.get_data()); self.load_invoices()
+            self.load_invoices()
         except Exception as e:
-            QMessageBox.warning(self,"Fehler",str(e))
+            QMessageBox.warning(
+                self, "Rechnung gespeichert",
+                "Die Rechnung wurde gespeichert, aber die Liste konnte nicht aktualisiert werden. "
+                "Bitte nur die Liste aktualisieren, nicht die Rechnung erneut erstellen.\n"
+                f"Details: {e}",
+            )
 
     def open_pdf(self):
         inv = self._selected()
