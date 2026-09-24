@@ -19,6 +19,9 @@ class PdfService:
         c.drawString(50, y, f"Rechnungsnummer: {payload['invoice_number']}")
         y -= 18
         c.drawString(50, y, f"Datum: {payload['invoice_date']}")
+        if payload.get("service_period"):
+            y -= 18
+            c.drawString(50, y, f"Leistung: {payload['service_period']}")
         y -= 30
         customer = payload["customer"]
         c.drawString(50, y, f"Kunde: {customer['name']}")
